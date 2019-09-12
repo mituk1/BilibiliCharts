@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:aop="http://www.springframework.org/schema/aop" 
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xmlns:jpa="http://www.springframework.org/schema/data/jpa" 
+    xmlns:sharding="http://shardingsphere.apache.org/schema/shardingsphere/sharding"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	    http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	    http://www.springframework.org/schema/context 
+	    http://www.springframework.org/schema/context/spring-context-4.3.xsd
+	    http://www.springframework.org/schema/mvc
+	    http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+	    http://www.springframework.org/schema/aop
+	    http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+	    http://www.springframework.org/schema/tx
+	    http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+	    http://www.springframework.org/schema/task  
+		http://www.springframework.org/schema/task/spring-task-4.1.xsd
+		http://www.springframework.org/schema/data/jpa 
+		http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+		http://shardingsphere.apache.org/schema/shardingsphere/sharding 
+        http://shardingsphere.apache.org/schema/shardingsphere/sharding/sharding.xsd"> 
+	<!-- 注解方式配置定时器 -->
+	<context:annotation-config />
+	<!-- 注解扫描 -->
+	<context:component-scan base-package="com.saki9.service.impl, com.saki9.timer, com.saki9.api, com.saki9.dao.impl, com.saki9.sharding"></context:component-scan>
+	<!-- 数据库配置文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties, classpath:danmaku.properties" system-properties-mode="FALLBACK" file-encoding="utf-8"/>
+	<!-- 配置数据源 -->
+	<bean id="biv_data" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${driverClassName}" />
+		<property name="url" value="${url}" />
+		<property name="username" value="${username}" />
+		<property name="password" value="${password}" />
+		<property name="initialSize" value="${initialSize}" />
+		<property name="maxActive" value="${maxActive}" />
+		<property name="minIdle" value="${minIdle}" />
+	</bean>
+
+	<!-- Sharding自增列 -->	
+	<sharding:key-generator id="keyGenerator" column="id" type="SNOWFLAKE"/>
+	<!-- Sharding分表配置 -->
+	<sharding:complex-strategy algorithm-ref="videoViewStrategy" sharding-columns="pubdate" id="videoViewTableStrategy"/>
+	<sharding:data-source id="dataSource">  
+        <sharding:sharding-rule data-source-names="biv_data">  
+            <sharding:table-rules>  
+                <sharding:table-rule logic-table="biv_videoview" actual-data-nodes="biv_data.biv_videoview_$->{2009..2021}_$->{1..4}" table-strategy-ref="videoViewTableStrategy" key-generator-ref="keyGenerator"/>
+            </sharding:table-rules>  
+        </sharding:sharding-rule>
+    </sharding:data-source>
+	
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="database" value="MYSQL" />
+				<property name="showSql" value="false" />
+				<property name="generateDdl" value="true" />
+			</bean>
+		</property>
+		<property name="packagesToScan" value="com.saki9.pojo"></property> 
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.generate_statistics">true</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.use_sql_comments">false</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+			</props>
+		</property>
+		<!--jpa的方言 ：高级的特性 -->
+        <property name="jpaDialect" >
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+        </property>
+	</bean>
+	
+	<!-- 配置事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- JPA配置  -->
+    <jpa:repositories base-package="com.saki9.repository"  transaction-manager-ref="transactionManager" entity-manager-factory-ref="entityManagerFactory"/>
+	<!-- 启用支持Annotation注解方式的事务管理 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!-- 识别定时器注解   --> 
+	<task:scheduler id="qbScheduler" pool-size="10"/>
+	<task:annotation-driven scheduler="qbScheduler" mode="proxy"/> 
+</beans>
