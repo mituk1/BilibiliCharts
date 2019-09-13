@@ -67,7 +67,6 @@ public class DanmakuServiceImpl implements DanmakuService{
 		try (PrintWriter writer = resp.getWriter();) {
 			List<Danmaku> xml2DanmakuList = xml2DanmakuList(xmlDanmaku);
 			String assDanmaku = createAssDanmaku(xml2DanmakuList);
-			System.out.println(title);
 			resp.setContentType("application/octet-stream;charset=UTF-8");  
 			resp.setHeader("Content-Disposition", "attachment;filename=" + fileName);
 			writer.write(assDanmaku);
@@ -78,7 +77,34 @@ public class DanmakuServiceImpl implements DanmakuService{
 	}
 
 	@Override
-	public String getXmlDanmaku(Long aid, Integer p) {
+	public String getXmlDanmakuUrl(Long aid, Integer p) {
+		VideoView videoView = videoViewServiceImpl.findByAid(aid);
+		if (videoView == null || StringUtils.isBlank(videoView.getPages())) {
+			return null;
+		}
+		JSONArray pagesArr = JSONArray.parseArray(videoView.getPages());
+		for (int i = 0; i < pagesArr.size(); i++) {
+			JSONObject page = pagesArr.getJSONObject(i);
+			if (page.getInteger("page") != p) {
+				continue;
+			}
+			try {
+				// 根据cid获取弹幕xml
+				return BilibiliApiClient.DANMAKU_URL + page.getLong("cid") + ".xml";
+			} catch (Exception e) {
+				logger.error("获取xml弹幕链接出错, aid=" + videoView.getAid() + ",p=" + p);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 获得弹幕xml
+	 * @param aid
+	 * @param p
+	 * @return
+	 */
+	private String getXmlDanmaku(Long aid, Integer p) {
 		// 获取视频信息
 		VideoView videoView = videoViewServiceImpl.findByAid(aid);
 		if (videoView == null || StringUtils.isBlank(videoView.getPages())) {

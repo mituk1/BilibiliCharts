@@ -33,4 +33,21 @@ public class DanmakuController {
 		}
 		return null;
 	}
+	
+	/**
+	 * @describe 获取xml弹幕地址
+	 * @param aid
+	 * @param p
+	 * @param resp
+	 * @return
+	 */
+	@RequestMapping("/bif/getXmlDanmakuUrl.htm")
+	@ResponseBody
+	public String getXmlDanmakuUrl(Long aid, @RequestParam(defaultValue = "1") Integer p, HttpServletResponse resp) {
+		String url = danmakuServiceImpl.getXmlDanmakuUrl(aid, p);
+		if (StringUtils.isBlank(url)) {
+			return ReturnUtil.errorReturn("获取xml弹幕链接出错");
+		}
+		return ReturnUtil.okReturn(url);
+	}
 }

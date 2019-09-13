@@ -19,6 +19,6 @@ public interface DanmakuService {
 	 * @param p
 	 * @return
 	 */
-	String getXmlDanmaku(Long aid, Integer p);
+	String getXmlDanmakuUrl(Long aid, Integer p);
 	
 }

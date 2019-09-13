@@ -127,7 +127,7 @@ public class VideoViewTask {
 			for (Long i = start; i <= end; i++) {
 				String data = null;
 				try {
-					data = BilibiliApiClient.getHtmlByAid((long)i, null);
+					data = BilibiliApiClient.getHtmlByAid((long)i, 1);
 				} catch (Exception e) {
 					VideoViewLose vvl = new VideoViewLose();
 					vvl.setAddTime(new Date());

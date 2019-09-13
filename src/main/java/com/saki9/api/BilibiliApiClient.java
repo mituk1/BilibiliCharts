@@ -11,27 +11,27 @@ public class BilibiliApiClient {
 	/**
 	 * @describe 移动端User-Agent
 	 */
-	private static String PHONE_USER_AGENT = "Mozilla/5.0 (Linux; U; Android 8.1.0; zh-cn; BLA-AL00 Build/HUAWEIBLA-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/8.9 Mobile Safari/537.36";
+	public static String PHONE_USER_AGENT = "Mozilla/5.0 (Linux; U; Android 8.1.0; zh-cn; BLA-AL00 Build/HUAWEIBLA-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/8.9 Mobile Safari/537.36";
 	/**
 	 * @describe chrome浏览器User-Agent
 	 */
-	private static String CHROME_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36";
+	public static String CHROME_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36";
 	/**
 	 * @describe 视频页面
 	 */
-	private static String HTML_URL = "https://www.bilibili.com/video/av";
+	public static String HTML_URL = "https://www.bilibili.com/video/av";
 	/**
 	 * @describe 移动端视频页面
 	 */
-	private static String PHONE_HTML_URL = "https://m.bilibili.com/video/av";
+	public static String PHONE_HTML_URL = "https://m.bilibili.com/video/av";
 	/**
 	 * @describe 获取最新视频信息
 	 */
-	private static String NEWLIST_URL = "https://api.bilibili.com/x/web-interface/newlist";
+	public static String NEWLIST_URL = "https://api.bilibili.com/x/web-interface/newlist";
 	/**
 	 * @describe 弹幕xml
 	 */
-	private static String DANMAKU_URL = "http://comment.bilibili.cn/";
+	public static String DANMAKU_URL = "http://comment.bilibili.cn/";
 	
 	/**
 	 * @describe 使用移动端User-Agent请求视频页面，获取页面HTML中视频JSON信息

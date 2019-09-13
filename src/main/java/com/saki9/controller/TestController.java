@@ -39,7 +39,7 @@ public class TestController {
 	@RequestMapping("/bif/jpatest.htm")
 	@ResponseBody
 	public void jpatest() throws Exception {
-		String htmlByAid = BilibiliApiClient.getHtmlByAid(63760606L, null);
+		String htmlByAid = BilibiliApiClient.getHtmlByAid(63760606L, 1);
 		VideoView jsonToVideoView = VideoViewServiceImpl.jsonToVideoView(htmlByAid);
 		videoViewServiceImpl.saveVideoView(jsonToVideoView);
 	}

@@ -93,7 +93,7 @@ public class VideoViewServiceImpl implements VideoViewService{
 		ter.setStartTime(new Date());
 		String htmlByAid = null;
 		try {
-			htmlByAid = BilibiliApiClient.getHtmlByAid(aid, null);
+			htmlByAid = BilibiliApiClient.getHtmlByAid(aid, 1);
 		} catch (Exception e) {
 			logger.error("请求视频信息出错, 错误aid = " + aid + e.getMessage());
 		}
